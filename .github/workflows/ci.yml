@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate marketplace catalog + plugin integrity
+        run: node scripts/validate-marketplace.mjs
+      - name: Smoke-test the packet script
+        run: |
+          node plugins/pilotfish/skills/pilotfish/scripts/packet.mjs \
+            --focus "ci smoke" --claim "runs" --limit 2000 --files plugins/pilotfish/skills/pilotfish/SKILL.md \
+            --out /tmp/pf-smoke.md
+          test -s /tmp/pf-smoke.md
+          grep -q "ci smoke" /tmp/pf-smoke.md

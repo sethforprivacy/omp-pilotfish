@@ -22,18 +22,22 @@ This skill never names a concrete model in prose or logic. Every tier is an **OM
 `~/.omp/agent/agents/`, and each file's `model:` frontmatter is that tier's model. Swap models by
 editing those files — no skill changes needed.
 
-| Role | Agent file | Tier | Job | Default model |
-|------|-----------|------|-----|---------------|
-| Orchestrator | *(main session)* | premium | framing, planning, approval, integration, **final review** | `prem/kimi-k3` (or `venice/zai-org-glm-5-2`) |
+| Role | Agent file | Tier | Job | Shipped default (recommended) |
+|------|-----------|------|-----|------|
+| Orchestrator | *(main session)* | premium | framing, planning, approval, integration, **final review** | `prem/kimi-k3` — swap to `openrouter/moonshotai/kimi-k3` or `openrouter/z-ai/glm-5.3` |
 | Recon | `pf-scout` | worker | read-only search/recon, facts with `file:line` | `vllm/deepseek-v4-flash-0731` |
 | Mechanical executor | `pf-mech-executor` | worker | fully-specified, same-shape repetition | `vllm/deepseek-v4-flash-0731` |
 | Judgment executor | `pf-executor` | worker | bounded implementation with local judgment | `vllm/deepseek-v4-flash-0731` |
-| Verifier | `pf-verifier` | premium | fresh-context outcome verification → CONFIRMED / REFUTED / INCONCLUSIVE | `prem/kimi-k3` |
+| Verifier | `pf-verifier` | premium | fresh-context outcome verification → CONFIRMED / REFUTED / INCONCLUSIVE | `prem/kimi-k3` — swap to `openrouter/moonshotai/kimi-k3` |
+
+Model routing lives in each agent file's `model:` frontmatter (and the `--model` the session
+launches with); the recommended public pairing routes the premium seats through OpenRouter.
+Rename `prem` ≠ premium: `prem/` is the PREM router provider, `openrouter/` is OpenRouter.
 
 **Rules that are NOT optional:**
-- The orchestrator (main session) must be a premium model — run OMP with `--model prem/kimi-k3`
-  (or your GLM 5.3 route). If the session runs on the worker model, you are not pilotfishing;
-  you are just a local-model session.
+- The orchestrator (main session) must be a premium model — run OMP with `--model prem/kimi-k3`,
+  `openrouter/moonshotai/kimi-k3`, or your GLM 5.3 route. If the session runs on the worker
+  model, you are not pilotfishing; you are just a local-model session.
 - Workers are pinned to the local router and do ALL volume work. Workers never spawn sub-agents
   (leaf roles) and never run on the premium model.
 - The verifier is a **premium, fresh-context** gate — it exists because the model that did the work
@@ -96,10 +100,15 @@ Rules:
 
 ### 5. Verify (verifier, premium) — the final-review gate
 Give `pf-verifier` the EXACT claim + acceptance conditions + the relevant diff/paths (build with
-the packet script):
+this skill's packet script — at `scripts/packet.mjs` next to this SKILL.md; canonical installed
+location `~/.omp/agent/skills/pilotfish/scripts/packet.mjs`):
 
 ```
-node ~/.omp/agent/skills/pilotfish/scripts/packet.mjs \
+Run it from the skill directory (where this SKILL.md lives — e.g. the plugin cache or
+`~/.omp/agent/skills/pilotfish/`), or via its absolute path:
+
+```
+node <skill-dir>/scripts/packet.mjs \
   --focus "<what was done>" \
   --claim "<exact acceptance: 'done means …'>" \
   --summary "<3-8 factual bullets of worker output>" \
@@ -132,10 +141,12 @@ changed, what you ignored and why, and the current verdict.
 
 ## Tooling
 
-- Scripts live in `~/.omp/agent/skills/pilotfish/scripts/` (absolute paths — cwd varies).
+- Scripts live in `scripts/` alongside this SKILL.md (use your installed skill dir absolute
+  path; cwd varies by project).
 - `packet.mjs`: `--focus` (required), `--claim`, `--summary`, `--files a,b,c` (explicit, no VCS),
   `--limit <bytes>`, `--out <path>`, `--json`. Auto-detects git (`git status --porcelain` +
   `git diff`) and jj (`jj status` + `jj diff --git`).
-- Changing tier models = editing the four `pf-*.md` agent files + the model role you run OMP with.
-  Update `model:` (e.g. swap `prem/kimi-k3` → `venice/zai-org-glm-5-2`, or worker to a different
-  local route). Register new provider endpoints in `~/.omp/agent/models.yml`.
+- Changing tier models = editing the four `pf-*.md` agent files + the `--model` role you run
+  OMP with. Update `model:` (e.g. swap `prem/kimi-k3` → `openrouter/moonshotai/kimi-k3`, or
+  `openrouter/z-ai/glm-5.3` for GLM 5.3). Register new provider endpoints in
+  `~/.omp/agent/models.yml` (OpenRouter is built in — just set `OPENROUTER_API_KEY`).

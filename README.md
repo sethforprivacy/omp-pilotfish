@@ -132,6 +132,7 @@ Keys: `openrouter` reads `OPENROUTER_API_KEY` from your environment or `~/.omp/a
 
 ```bash
 echo "OPENROUTER_API_KEY=sk-or-…" >> ~/.omp/agent/.env
+chmod 600 ~/.omp/agent/.env   # or create the file via editor/secrets manager
 ```
 
 Any other OpenAI-compatible gateway (PREM, Venice, …) follows the same pattern: add a

@@ -68,11 +68,35 @@ omp plugin marketplace add sethforprivacy/omp-pilotfish
 omp plugin install pilotfish@omp-pilotfish
 ```
 
-Pull updates after a new release:
+### Upgrading
+
+`omp plugin upgrade` compares against a **cached copy of the marketplace catalog**, so refresh the
+catalog first or it will report "up to date" and reinstall the old version:
 
 ```bash
+omp plugin marketplace update omp-pilotfish
 omp plugin upgrade pilotfish@omp-pilotfish
+omp plugin list   # should show pilotfish@omp-pilotfish (<new version>)
 ```
+
+If it still shows the old version, the cached catalog clone is stale beyond a fast-forward; drop and
+re-add it:
+
+```bash
+omp plugin marketplace remove omp-pilotfish
+omp plugin marketplace add sethforprivacy/omp-pilotfish
+omp plugin install pilotfish@omp-pilotfish --force
+```
+
+Then make sure no hand-copied `~/.omp/agent/agents/pf-*.md` or `~/.omp/agent/skills/pilotfish`
+remain — user-level files win over plugin files by name and would shadow the upgrade:
+
+```bash
+ls ~/.omp/agent/agents/pf-*.md ~/.omp/agent/skills/pilotfish 2>/dev/null && echo "manual copies present: move them aside"
+```
+
+Model routing survives upgrades because it lives in `~/.omp/agent/config.yml`, not in the plugin
+(see [Customizing the model tiers](#customizing-the-model-tiers)).
 
 ## Install (manual copy)
 

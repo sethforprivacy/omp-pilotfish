@@ -7,14 +7,14 @@
   },
   "metadata": {
     "description": "Two-tier orchestration for Oh My Pi: a premium model orchestrates + owns the final review, all work/research/implementation runs on your local cheaper router. Port of Nanako0129/pilotfish (MIT).",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "pilotfish",
       "description": "Two-tier orchestration skill — premium model plans/reviews, local router does all volume work",
       "source": "./plugins/pilotfish",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "Seth",
         "email": "seth@sethforprivacy.com"

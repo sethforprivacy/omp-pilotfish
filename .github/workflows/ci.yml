@@ -18,6 +18,8 @@ jobs:
           node-version: 20
       - name: Validate marketplace catalog + plugin integrity
         run: node scripts/validate-marketplace.mjs
+      - name: Lint agent frontmatter + presets
+        run: node scripts/lint-agents.mjs
       - name: Smoke-test the packet script
         run: |
           node plugins/pilotfish/skills/pilotfish/scripts/packet.mjs \
@@ -25,3 +27,10 @@ jobs:
             --out /tmp/pf-smoke.md
           test -s /tmp/pf-smoke.md
           grep -q "ci smoke" /tmp/pf-smoke.md
+          grep -q "fingerprint" /tmp/pf-smoke.md
+          # secret hygiene: an untracked .env-style file must be listed but never embedded
+          echo "TOKEN=sk-ci-should-not-leak" > plugins/pilotfish/ci-probe.env
+          node plugins/pilotfish/skills/pilotfish/scripts/packet.mjs --focus "ci secret probe" --out /tmp/pf-secret.md
+          grep -q "not embedded: secret-like name" /tmp/pf-secret.md
+          ! grep -q "sk-ci-should-not-leak" /tmp/pf-secret.md
+          rm -f plugins/pilotfish/ci-probe.env

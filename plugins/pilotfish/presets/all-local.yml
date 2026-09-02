@@ -1,0 +1,18 @@
+# pilotfish preset: everything on your local OpenAI-compatible router (`vllm` provider in
+# ~/.omp/agent/models.yml). Workers on the flash-class model, verifier on the strong model.
+#
+# One run:      omp --config <plugin-dir>/presets/all-local.yml --model vllm/GLM-5.3-Flash-Ring
+# Persistent:   copy the blocks below into ~/.omp/agent/config.yml (or <repo>/.omp/config.yml)
+#
+# The shipped agents list a role alias first (`@pf-worker` / `@pf-strong`), so these two
+# modelRoles keys move a whole tier. task.agentModelOverrides (per agent name) wins over both and
+# pins a single seat. You never edit installed agent files. The orchestrator is still your --model.
+modelRoles:
+  pf-worker: vllm/deepseek-v4-flash-0731
+  pf-strong: vllm/GLM-5.3-Flash-Ring
+task:
+  agentModelOverrides:
+    pf-scout: vllm/deepseek-v4-flash-0731
+    pf-mech-executor: vllm/deepseek-v4-flash-0731
+    pf-executor: vllm/deepseek-v4-flash-0731
+    pf-verifier: vllm/GLM-5.3-Flash-Ring

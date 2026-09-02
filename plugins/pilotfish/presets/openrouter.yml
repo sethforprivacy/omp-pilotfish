@@ -1,0 +1,15 @@
+# pilotfish preset: premium seats on OpenRouter (OMP built-in provider; set OPENROUTER_API_KEY),
+# workers on OpenRouter's DeepSeek V4 Flash. Point pf-worker at your local `vllm/...` route to keep
+# volume work off the paid API.
+#
+# One run:      omp --config <plugin-dir>/presets/openrouter.yml --model openrouter/moonshotai/kimi-k3
+# Persistent:   copy the blocks below into ~/.omp/agent/config.yml (or <repo>/.omp/config.yml)
+modelRoles:
+  pf-worker: openrouter/deepseek/deepseek-v4-flash
+  pf-strong: openrouter/moonshotai/kimi-k3
+task:
+  agentModelOverrides:
+    pf-scout: openrouter/deepseek/deepseek-v4-flash
+    pf-mech-executor: openrouter/deepseek/deepseek-v4-flash
+    pf-executor: openrouter/deepseek/deepseek-v4-flash
+    pf-verifier: openrouter/moonshotai/kimi-k3

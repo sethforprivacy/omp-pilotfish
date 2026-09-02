@@ -76,8 +76,10 @@ Run these steps in order. The packet script is deterministic context capture; yo
 
 ### 1. Frame + roster (orchestrator, strong)
 Write one to three sentences: what is being done, what "done" means, and the constraints. Then one
-roster line: `orchestrator=<your model> workers=<model> verifier=<model>` (from presets/config; say
-"per agent defaults" if no override is active). If the outcome or acceptance is unclear, ask a
+roster line: `orchestrator=<your model> workers=<model> verifier=<model>`. Your own model you know;
+for the others cite where you read it (`~/.omp/agent/config.yml`, `<repo>/.omp/config.yml`, a
+preset the user named) or write `unverified` — do not report the agent files' defaults as fact,
+because an override you cannot see may be active. If the outcome or acceptance is unclear, ask a
 direction-changing question first (interaction shape `co_discover`); otherwise `explore_then_plan`
 for broad/high-impact work, `execute` for bounded work. Long runs: keep a ledger — one line per
 slice (`slice N: <what> → <worker> → <verdict>`) appended to a file next to your packets — so a
